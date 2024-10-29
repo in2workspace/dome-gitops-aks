@@ -4,70 +4,30 @@ This repository contains the deployments and descriptions for the DOME-Marketpla
 
 A description of the deployed architecture and a description of the main flows inside the system can be found [here](./doc/ARCHITECTURE.md). The demo-scenario, show-casing some of the current features can be found under [demo](./doc/DEMO.md)
 
-## Setup
+# Setup
 
-The GitOps approach aims for a maximum of automation and will allow to reproduce the full setup. 
-For more information about GitOps, see:
-    - RedHat Pros and Cons - https://www.redhat.com/architect/gitops-implementation-patterns
-    - ArgoCD - https://argo-cd.readthedocs.io/en/stable/
-    - FluxCD - https://fluxcd.io/
+### AKS Cluster creation
 
-### Preparation
+COMPLETE STEPS
 
-> :warning: All documentation and tooling uses Linux and is only tested there(more specifically Ubuntu). If another system is used, please find proper replacements that fit your needs.
+### Login to AKS
+1. Add "Azure Kubernetes Service RBAC Cluster Admin" role to your user in Azure
 
-In order to setup the DOME-Marketplace, its recommended to install the following tools before starting
-
-- [ionosctl-cli](https://github.com/ionos-cloud/ionosctl) to interact with the Ionos-APIs
-- [jq](https://jqlang.github.io/jq/download/) as a json-processor to ease the work with the client outputs
-- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) for debugging and inspecting the resources in the cluster
-- [kubeseal](https://github.com/bitnami-labs/sealed-secrets#kubeseal) for sealing secrets using asymmetric cryptography
-
-### Cluster creation
-
-> :warning: The cluster is created on the Ionos-Cloud, therefor you should have your account data available.
-
-1. In order to create the cluster, login to Ionos:
-```shell
-    ionosctl login 
+2. Login with your user 
+```bash
+az login
 ```
 
-2. A Datacenter as the logical bracket around the nodes in your cluster has to be created:
-```shell
-    export DOME_DATACENTER_ID=$(ionosctl datacenter create --name DOME-Marketplace -o json | jq -r '.items[0].id')
-    # wait for the datacenter to be "AVAILABLE"
-    watch ionosctl datacenter get -i $DOME_DATACENTER_ID
+3. Select your Azure subscription
+
+4. Get AKS credentials to connect to using Kubectl
+az aks get-credentials --resource-group rg-in2-dome-dev-01 --name aks-in2-dome-dev-01
+
+5. Check the connection
+
+```bash
+kubectl get nodes
 ```
-
-3. Create the Kubernetes Cluster and wait for it to be "ACTIVE":
-```shell
-    export DOME_K8S_CLUSTER_ID=$(ionosctl k8s cluster create --name DOME-Marketplace-K8S -o json | jq -r '.items[0].id')
-    watch ionosctl k8s cluster get -i $DOME_K8S_CLUSTER_ID
-```
-
-4. Create the initial nodepool inside your cluster and datacenter:
-```shell
-    export DOME_K8S_DEFAULT_NODEPOOL_ID=$(ionosctl k8s nodepool create --cluster-id $DOME_K8S_CLUSTER_ID --name default-pool --node-count 2 --ram 8192 --storage-size 10 --datacenter-id $DOME_DATACENTER_ID --cpu-family "INTEL_SKYLAKE"  -o json | jq -r '.items[0].id')
-    # wait for the pool to be available
-    watch ionosctl k8s nodepool get --nodepool-id $DOME_K8S_DEFAULT_NODEPOOL_ID --cluster-id $DOME_K8S_CLUSTER_ID
-```
-
-5. Following the recommendations from the [Ionos-FAQ](https://docs.ionos.com/cloud/managed-services/managed-kubernetes/ingress-preserve-source-ip), we also dedicate a specific nodepool for the ingress-controller
-
-```shell 
-    export DOME_K8S_INGRESS_NODEPOOL_ID=$(ionosctl k8s nodepool create --cluster-id $DOME_K8S_CLUSTER_ID --name default-pool --node-count 1 --datacenter-id $DOME_DATACENTER_ID --cpu-family "INTEL_SKYLAKE" --labels nodepool=ingress -o json | jq -r '.items[0].id')
-    # wait for the pool to be available
-    watch ionosctl k8s nodepool get --nodepool-id $DOME_K8S_INGRESS_NODEPOOL_ID --cluster-id $DOME_K8S_CLUSTER_ID
-```
-
-6. Retrieve the kubeconfig to access the cluster:
-```shell
-    ionosctl k8s kubeconfig get --cluster-id $DOME_K8S_CLUSTER_ID > dome-k8s-config.json
-    # Exporting the file path to $KUBECONFIG will make it the default config for kubectl. 
-    # If you work with multiple clusters, either extend your existing config or use the file inline with the --kubeconfig flag.
-    export KUBECONFIG=$(pwd)/dome-k8s-config.json
-```
-
 
 ### Gitops Setup
 
