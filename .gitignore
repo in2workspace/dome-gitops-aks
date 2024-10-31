@@ -1,4 +1,5 @@
 *-plain-secret.yaml
+*-plain-secret.json
 webhook-tsl-sec.yaml
 accounts*
 connectivity-test.yaml

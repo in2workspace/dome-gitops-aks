@@ -21,7 +21,10 @@ az login
 3. Select your Azure subscription
 
 4. Get AKS credentials to connect to using Kubectl
+
+```bash
 az aks get-credentials --resource-group rg-in2-dome-dev-01 --name aks-in2-dome-dev-01
+```
 
 5. Check the connection
 
@@ -37,10 +40,16 @@ kubectl get nodes
 In order to provide GitOps capabilities, we use [ArgoCD](https://argo-cd.readthedocs.io/en/stable/). To setup the tool, we use helm argocd [chart](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd).
 > :warning: The following steps expect kubectl to be already connected to the cluster, as described in [cluster-creationg step 6](#cluster-creation)  
 
-1. Deploy argocd for sbx environment:
+1. Add Argo Helm repository
+
+```shell
+    helm repo add argo https://argoproj.github.io/argo-helm
+```
+
+2. Deploy argocd for sbx environment:
 ```shell
     # Extract the argocd helm chart <versiom> from applications_sbx/infrastructure/argocd.yaml
-    helm upgrade -i --namespace argocd --create-namespace --values ionos_sbx/argocd/values.yaml --version <version> argocd argo/argo-cd
+    helm upgrade -i --namespace argocd --create-namespace --values ionos_sbx/argocd/values.yaml argocd argo/argo-cd
 ```
 
 From now on, every deployment should be managed by ArgoCD through [Applications](https://argo-cd.readthedocs.io/en/stable/core_concepts/).
@@ -98,6 +107,8 @@ In order to automatically create DNS entries for [Ingress-Resources](https://kub
 
 > :bulb: The ```dome-marketplace.org|io|eu|com``` domains are currently using nameservers provided by AWS Route53. If you manage the domains somewhere else, follow the recommendations in the [External-DNS documentation](https://github.com/kubernetes-sigs/external-dns/tree/master/docs/tutorials).
 
+#### AWS Route53
+
 1. External-DNS watches the ingress objects and creates A-Records for them. To do so, it needs the ability to access the AWS APIs. 
     1. Create the IAM Policy accoring to the [documentation](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md#iam-policy)
     2. Create a user in AWS IAM and assign the policy. 
@@ -121,6 +132,91 @@ data:
 
 2. Apply the application: 
 ```shell
+    kubectl apply -f applications/external-dns.yaml -n argocd
+    # wait for it to be SYNCED and Healthy
+    watch kubectl get applications -n argocd
+```
+
+#### Azure DNS Zone
+
+ExternalDNS needs permissions to make changes to the Azure DNS zone. There are four ways to configure accoring to the [documentation](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/azure.md#permissions-to-modify-dns-zone)
+
+Following steps are for access using the a service principal:
+
+1. Create the service principal
+
+```shell
+$ EXTERNALDNS_NEW_SP_NAME="ExternalDnsServicePrincipal" # name of the service principal
+$ AZURE_DNS_ZONE_RESOURCE_GROUP="MyDnsResourceGroup" # name of resource group where dns zone is hosted
+$ AZURE_DNS_ZONE="example.com" # DNS zone name like example.com or sub.example.com
+
+# Create the service principal
+$ DNS_SP=$(az ad sp create-for-rbac --name $EXTERNALDNS_NEW_SP_NAME)
+$ EXTERNALDNS_SP_APP_ID=$(echo $DNS_SP | jq -r '.appId')
+$ EXTERNALDNS_SP_PASSWORD=$(echo $DNS_SP | jq -r '.password')
+
+
+EXTERNALDNS_NEW_SP_NAME="sp-in2-dome-aks-dev-02"
+AZURE_DNS_ZONE_RESOURCE_GROUP="rg-in2-dns-dev"
+AZURE_DNS_ZONE="dev.in2.es"
+DNS_SP=$(az ad sp create-for-rbac --name $EXTERNALDNS_NEW_SP_NAME)
+EXTERNALDNS_SP_APP_ID=$(echo $DNS_SP | jq -r '.appId')
+EXTERNALDNS_SP_PASSWORD=$(echo $DNS_SP | jq -r '.password')
+```
+
+2. Grant permissions to the service principal
+
+```bash
+# Fetch DNS id used to grant access to the service principal
+DNS_ID=$(az network dns zone show --name $AZURE_DNS_ZONE \
+ --resource-group $AZURE_DNS_ZONE_RESOURCE_GROUP --query "id" --output tsv)
+
+# Grant reader to the resource group
+$ az role assignment create --role "Reader" --assignee $EXTERNALDNS_SP_APP_ID --scope $DNS_ID
+
+# Grant contributor to DNS Zone
+$ az role assignment create --role "Contributor" --assignee $EXTERNALDNS_SP_APP_ID --scope $DNS_ID
+```
+
+3. Create the configuration file
+
+```bash
+cat <<-EOF > azure-plain-secret.json
+{
+  "tenantId": "$(az account show --query tenantId -o tsv)",
+  "subscriptionId": "$(az account show --query id -o tsv)",
+  "resourceGroup": "$AZURE_DNS_ZONE_RESOURCE_GROUP",
+  "aadClientId": "$EXTERNALDNS_SP_APP_ID",
+  "aadClientSecret": "$EXTERNALDNS_SP_PASSWORD"
+}
+EOF
+```
+
+4. Create the Kubernetes secret 
+
+```shell
+kubectl create secret generic azure-config-file --namespace "default" --from-file azure-plain-secret.json
+```
+
+    4. Base64 encode the file and put it into a secret of the following format:
+```yaml
+    apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-access-key
+  namespace: infra
+data:
+  credentials: W2RlZmF1bHRdCmF3c19zZWNyZXRfYWNjZXNzX2tleSA9IFRIRV9LRVkKYXdzX2FjY2Vzc19rZXlfaWQgPSBUSEVfS0VZX0lE
+```
+
+5. Seal the secret and commit the sealed secret. :warning: Never put the plain secret into git.
+
+```bash
+kubeseal -f mysecret.yaml -w mysealedsecret.yaml --controller-namespace sealed-secrets  --controller-name sealed-secrets
+```
+
+6. Apply the application: 
+```bash
     kubectl apply -f applications/external-dns.yaml -n argocd
     # wait for it to be SYNCED and Healthy
     watch kubectl get applications -n argocd
