@@ -146,19 +146,11 @@ Following steps are for access using the a service principal:
 1. Create the service principal
 
 ```shell
-$ EXTERNALDNS_NEW_SP_NAME="ExternalDnsServicePrincipal" # name of the service principal
-$ AZURE_DNS_ZONE_RESOURCE_GROUP="MyDnsResourceGroup" # name of resource group where dns zone is hosted
-$ AZURE_DNS_ZONE="example.com" # DNS zone name like example.com or sub.example.com
+EXTERNALDNS_NEW_SP_NAME="ExternalDnsServicePrincipal" # name of the service principal
+AZURE_DNS_ZONE_RESOURCE_GROUP="MyDnsResourceGroup" # name of resource group where dns zone is hosted
+AZURE_DNS_ZONE="example.com" # DNS zone name like example.com or sub.example.com
 
 # Create the service principal
-$ DNS_SP=$(az ad sp create-for-rbac --name $EXTERNALDNS_NEW_SP_NAME)
-$ EXTERNALDNS_SP_APP_ID=$(echo $DNS_SP | jq -r '.appId')
-$ EXTERNALDNS_SP_PASSWORD=$(echo $DNS_SP | jq -r '.password')
-
-
-EXTERNALDNS_NEW_SP_NAME="sp-in2-dome-aks-dev-02"
-AZURE_DNS_ZONE_RESOURCE_GROUP="rg-in2-dns-dev"
-AZURE_DNS_ZONE="dev.in2.es"
 DNS_SP=$(az ad sp create-for-rbac --name $EXTERNALDNS_NEW_SP_NAME)
 EXTERNALDNS_SP_APP_ID=$(echo $DNS_SP | jq -r '.appId')
 EXTERNALDNS_SP_PASSWORD=$(echo $DNS_SP | jq -r '.password')
@@ -181,7 +173,7 @@ $ az role assignment create --role "Contributor" --assignee $EXTERNALDNS_SP_APP_
 3. Create the configuration file
 
 ```bash
-cat <<-EOF > azure-plain-secret.json
+cat <<-EOF > azure/external-dns/azure-config-plain-secret.json
 {
   "tenantId": "$(az account show --query tenantId -o tsv)",
   "subscriptionId": "$(az account show --query id -o tsv)",
@@ -192,32 +184,28 @@ cat <<-EOF > azure-plain-secret.json
 EOF
 ```
 
-4. Create the Kubernetes secret 
+DELETE 4. Base64 encode the azure-config-plain-secret.json file content and put it into a secret using the following format.
 
-```shell
-kubectl create secret generic azure-config-file --namespace "default" --from-file azure-plain-secret.json
-```
-
-    4. Base64 encode the file and put it into a secret of the following format:
+Filename: azure/external-dns/azure-plain-secret.yaml
 ```yaml
-    apiVersion: v1
+apiVersion: v1
 kind: Secret
 metadata:
-  name: aws-access-key
-  namespace: infra
+  name: azure-access-key
+  namespace: default
 data:
-  credentials: W2RlZmF1bHRdCmF3c19zZWNyZXRfYWNjZXNzX2tleSA9IFRIRV9LRVkKYXdzX2FjY2Vzc19rZXlfaWQgPSBUSEVfS0VZX0lE
+  credentials: YOUR_BASE64_AZURE_CONFIG_FILE_CONTENT
 ```
 
-5. Seal the secret and commit the sealed secret. :warning: Never put the plain secret into git.
+DELETE 5. Seal the secret and commit the sealed secret. :warning: Never put the plain secret into git.
 
 ```bash
-kubeseal -f mysecret.yaml -w mysealedsecret.yaml --controller-namespace sealed-secrets  --controller-name sealed-secrets
+kubeseal -f azure-plain-secret.yaml -w azure/external-dns/templates/azure-sealed-secret.yaml --controller-namespace sealed-secrets  --controller-name sealed-secrets
 ```
 
-6. Apply the application: 
+6. Apply the application
 ```bash
-    kubectl apply -f applications/external-dns.yaml -n argocd
+    kubectl apply -f applications/azure-external-dns.yaml -n argocd
     # wait for it to be SYNCED and Healthy
     watch kubectl get applications -n argocd
 ```
