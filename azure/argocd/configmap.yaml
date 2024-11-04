@@ -10,18 +10,15 @@ data:
   resource.customizations.ignoreDifferences.apps_Deployment: |
     jsonPointers:
     - /spec/replicas
-  url: https://argocd.dome-marketplace.org
-  # explicitly set through rbac
-  admin.enabled: "true"
+  url: https://dome-argocd.dev.in2.es
+  admin.enabled: "false"
   dex.config: |
     connectors:
-      # GitHub example
       - type: github
         id: github
         name: GitHub
         config:
-          clientID: 65555cc661699aa6e33e
-          clientSecret: $github-secret:clientSecret
+          clientID: Ov23li4yWEQViQYejE6h
+          clientSecret: 48e2f64bb32dc03aa306f66c0c12bfe2ac0c1893
           orgs:
           - name: DOME-Marketplace
-          - name: in2workspace
