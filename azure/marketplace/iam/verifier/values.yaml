@@ -1,0 +1,40 @@
+verifier-api:
+  image:
+    repository: in2workspace/in2-verifier-api
+    tag: v1.0.1-snapshot
+    pullPolicy: Always
+
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-sbx-issuer
+    hosts:
+      - host: verifier.dome-marketplace-sbx.org
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - verifier.dome-marketplace-sbx.org
+        secretName: verifier-tls-sec
+
+  app:
+    profile: dev
+    externalDomain: "https://verifier.dome-marketplace-sbx.org"
+    accessToken:
+      expirationUnitTime: MINUTES
+      expirationTime: 60
+    clientsRepository:
+      uri: "https://raw.githubusercontent.com/DOME-Marketplace/trust-framework/refs/heads/main/sbx/trusted_services_list.yaml"
+    trustedIssuerList:
+      uri: "http://trusted-issuers-list.marketplace.svc.cluster.local:8080/v4/issuers/"
+    privateKey:
+      existingSecret:
+        enabled: true
+        name: private-key-secret
+        key: private-key
+    verifierUiLoginUris:
+      onboardingUri: "https://knowledgebase.dome-marketplace.org/shelves/company-onboarding-process"
+      supportUri: "https://ticketing.dome-marketplace.org"
+      walletUri: "https://wallet.dome-marketplace-sbx.org"
