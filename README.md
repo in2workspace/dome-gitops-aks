@@ -173,7 +173,7 @@ $ az role assignment create --role "Contributor" --assignee $EXTERNALDNS_SP_APP_
 3. Create the configuration file
 
 ```bash
-cat <<-EOF > azure/external-dns/azure-config-plain-secret.json
+cat <<-EOF > azure-config-plain-secret.json
 {
   "tenantId": "$(az account show --query tenantId -o tsv)",
   "subscriptionId": "$(az account show --query id -o tsv)",
@@ -184,9 +184,9 @@ cat <<-EOF > azure/external-dns/azure-config-plain-secret.json
 EOF
 ```
 
-DELETE 4. Base64 encode the azure-config-plain-secret.json file content and put it into a secret using the following format.
+4. Base64 encode the azure-config-plain-secret.json file content and put it into a secret using the following format.
 
-Filename: azure/external-dns/azure-plain-secret.yaml
+Filename: azure-plain-secret.yaml
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -197,7 +197,7 @@ data:
   credentials: YOUR_BASE64_AZURE_CONFIG_FILE_CONTENT
 ```
 
-DELETE 5. Seal the secret and commit the sealed secret. :warning: Never put the plain secret into git.
+5. Seal the secret and commit the sealed secret. :warning: Never put the plain secret into git.
 
 ```bash
 kubeseal -f azure-plain-secret.yaml -w azure/external-dns/templates/azure-sealed-secret.yaml --controller-namespace sealed-secrets  --controller-name sealed-secrets
@@ -210,7 +210,7 @@ kubeseal -f azure-plain-secret.yaml -w azure/external-dns/templates/azure-sealed
     watch kubectl get applications -n argocd
 ```
 
-### Cert-Manager
+### Cert-Manager FIX WORKS ONLY FOR AWS
 
 In addition to the dns-entries, we also need valid certificates for the ingress. The certificates will be provided by [Lets encrypt](https://letsencrypt.org/). To automate creation and update of the certificates, [Cert-Manager](https://cert-manager.io/) is used. 
 
