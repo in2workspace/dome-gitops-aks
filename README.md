@@ -205,7 +205,7 @@ kubeseal -f azure-plain-secret.yaml -w azure/external-dns/templates/azure-sealed
 
 6. Apply the application
 ```bash
-    kubectl apply -f applications/azure-external-dns.yaml -n argocd
+    kubectl apply -f applications_in2_sbx/azure-external-dns.yaml -n argocd
     # wait for it to be SYNCED and Healthy
     watch kubectl get applications -n argocd
 ```
@@ -265,7 +265,7 @@ To seamlessly use ArgoCD, we use [Githubs Oauth](https://docs.github.com/en/apps
 5. Configure user-roles in the [rbac-configmap](./ionos/argocd/configmap-rbac.yaml)
 6. Apply the application 
 ```shell
-    kubectl apply -f applications/argocd.yaml -n argocd
+    kubectl apply -f applications_in2_sbx/azure-argocd.yaml -n argocd
     # wait for it to be SYNCED and Healthy
     watch kubectl get applications -n argocd
 ```
