@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     path: azure/external-dns
-    repoURL: https://github.com/DOME-Marketplace/dome-gitops
+    repoURL: https://github.com/in2workspace/dome-gitops-aks
     targetRevision: HEAD
   syncPolicy:
     automated:
