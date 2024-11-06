@@ -14,15 +14,15 @@ access-node:
       enabled: true
       className: nginx
       annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-in2-test-issuer
+        cert-manager.io/cluster-issuer: letsencrypt-issuer
       hosts:
-        - host: desmos.dome-marketplace-lcl.org
+        - host: dome-desmos.dev.in2.es
           paths:
             - path: /
               pathType: Prefix
       tls:
         - hosts:
-            - desmos.dome-marketplace-lcl.org
+            - dome-desmos.dev.in2.es
           secretName: desmos-tls-secret
     ## deployment specific configuration
     app:
@@ -63,21 +63,20 @@ access-node:
         # -- a list of entity-types the connector is interested in
         entityTypes: catalog,product-offering,category,individual,organization,product,service-specification,product-offering-price,resource-specification,product-specification
       # -- URL of the Marketplace of the operator
-      externalDomain: "https://www.operator-marketplace.com"
+      externalDomain: "https://dome-marketplace.dev.in2.es"
       externalAccessNodesUrls:
         enableCustomUrls: true
         customUrls: ""
       # -- Private key of the operator to sign JWT. Alternatively, you can add it as a sealed secret.
-      privateKey: "0x4c88c1c84e65e82b9ed6b49313c6a624d58b2b11e40b4b64e3b9d0a1d5e4dfajE"
-      #privateKey:
-      #  existingSecret:
-      #    # -- should an existing secret be used
-      #    enabled: true
+      privateKey: 
+        value: "0x4c88c1c84e65e82b9ed6b49313c6a624d58b2b11e40b4b64e3b9d0a1d5e4dfajE"
+        existingSecret:
+          # -- should an existing secret be used
+          enabled: false
       #    # -- name of the secret
       #    name: desmos-secret
       #    # -- key to retrieve the password from
       #    key: private-key
-      ## configuration of the database to be used by the blockchain-connector
     ## configuration of the database to be used by the blockchain-connector
     db:
       # -- host of the db
@@ -93,9 +92,9 @@ access-node:
       # -- password to be used
       password: postgres
       # -- existing secret to retrieve the db password
-      #existingSecret:
-      #  # -- should an existing secret be used
-      #  enabled: true
+      existingSecret:
+        # -- should an existing secret be used
+        enabled: false
       #  # -- name of the secret
       #  name: desmos-secret
       #  # -- key to retrieve the password from
@@ -115,8 +114,8 @@ access-node:
       RPC_ADDRESS: "https://red-t.alastria.io/v0/9461d9f4292b41230527d57ee90652a6"
       ISS: "0x43b27fef24cfe8a0b797ed8a36de2884f9963c0c2a0da640e3ec7ad6cd0c493d"
     # -- Private key of the operator in the Alastria Red-T Blockchain to sign transactions as a sealed secret.
-    #existingSecret:
-    #  enabled: true
+    existingSecret:
+      enabled: false
     #  name: desmos-secret
     #  key: private-key
   ## configuration of postgres to be used for the blockchain-connector - see https://github.com/bitnami/charts/tree/main/bitnami/postgresql for details
