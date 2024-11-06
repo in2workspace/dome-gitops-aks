@@ -276,6 +276,8 @@ Login to our [ArgoCD](https://argocd.dome-marketplace.org).
 
 TODO Add the list of requiered applications using
 kubectl apply -f applications_in2_sbx/azure-argocd.yaml -n argocd
+# wait for it to be SYNCED and Healthy
+    watch kubectl get applications -n argocd
 
 TODO Repairing sealed secrets. By default the required secret will be in Generic Secrets
 
