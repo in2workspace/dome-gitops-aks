@@ -68,7 +68,7 @@ access-node:
         enableCustomUrls: true
         customUrls: ""
       # -- Private key of the operator to sign JWT. Alternatively, you can add it as a sealed secret.
-      privateKey: 0x4c88c1c84e65e82b9ed6b4 9313c6a624d58b2b11e40b4b 64e3b9d0a1d5e4dfajE (Sample Value)
+      privateKey: 0x4c88c1c84e65e82b9ed6b49313c6a624d58b2b11e40b4b64e3b9d0a1d5e4dfajE
       #privateKey:
       #  existingSecret:
       #    # -- should an existing secret be used
