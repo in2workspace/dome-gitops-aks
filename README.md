@@ -272,7 +272,12 @@ To seamlessly use ArgoCD, we use [Githubs Oauth](https://docs.github.com/en/apps
 
 Login to our [ArgoCD](https://argocd.dome-marketplace.org).
 
-## Deploy a new application
+## Deploy Applications
+
+TODO Add the list of requiered applications using
+kubectl apply -f applications_in2_sbx/azure-argocd.yaml -n argocd
+
+TODO Repairing sealed secrets. By default the required secret will be in Generic Secrets
 
 In order to deploy a new application, follow the steps:
 1. Fork the repository and create a new branch.
