@@ -22,3 +22,4 @@ data:
           clientSecret: 48e2f64bb32dc03aa306f66c0c12bfe2ac0c1893
           orgs:
           - name: DOME-Marketplace
+          - name: in2workspace
