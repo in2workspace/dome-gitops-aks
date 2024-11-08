@@ -12,7 +12,7 @@ data:
       "displayNameHtml": "<div class=\"kc-logo-text\"><span>Keycloak</span></div>",
       "enabled": true,
       "attributes": {
-        "frontendUrl": "https://keycloak.dome-marketplace-sbx.org"
+        "frontendUrl": "https://keycloak-dome.dev.in2.es"
       },
       "sslRequired": "none",
       "roles": {
@@ -27,7 +27,7 @@ data:
           }
         ],
         "client": {
-          "did:web:onboarding.dome-marketplace-sbx.org": [
+          "did:web:onboarding-dome.dev.in2.es": [
             {
               "name": "LEGAL_REPRESENTATIVE",
               "description": "Is allowed to register participants",
@@ -39,7 +39,7 @@ data:
               "clientRole": true
             }
           ],
-          "did:web:dome-marketplace-sbx.org": [
+          "did:web:dome-marketplace.dev.in2.es": [
             {
               "name": "admin",
               "description": "Is allowed to buy.",
@@ -54,7 +54,7 @@ data:
       ],
       "clients": [
         {
-          "clientId": "did:web:onboarding.dome-marketplace-sbx.org",
+          "clientId": "did:web:onboarding-dome.dev.in2.es",
           "enabled": true,
           "description": "Client to connect the onboarding services of the marketplace",
           "surrogateAuthRequired": false,
@@ -78,7 +78,7 @@ data:
               "expiryInMin": "3600",
               "vctypes_NaturalPersonCredential": "ldp_vc,jwt_vc_json",
               "vctypes_GaiaXParticipantCredential": "ldp_vc,jwt_vc_json",
-              "vc_subjectDid": "did:web:dome-marketplace-sbx.org",
+              "vc_subjectDid": "did:web:dome-marketplace.dev.in2.es",
               "vc_gx:legalName": "Dome Marketplace",
               "GaiaXParticipantCredential_claims": "subjectDid,gx:legalName",
               "NaturalPersonCredential_claims": "email,firstName,familyName,roles"
@@ -90,7 +90,7 @@ data:
           "optionalClientScopes": []
         },
         {
-          "clientId": "did:web:dome-marketplace-sbx.org",
+          "clientId": "did:web:dome-marketplace.dev.in2.es",
           "enabled": true,
           "description": "Client to connect to the marketplace portal.",
           "surrogateAuthRequired": false,

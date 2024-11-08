@@ -12,26 +12,26 @@ dsba-pdp:
     ishare:
       existingSecret: walt-id-vcwaltid-tls-sec
 
-      clientId: did:web:dome-marketplace-sbx.org
+      clientId: did:web:dome-marketplace.dev.in2.es
       trustedFingerprints:
         - D2F62092F982CF783D4632BD86FA86C3FBFDB2D8C8A58BC6809163FCF5CD030B
 
       ar:
-        id: "did:web:dome-marketplace-sbx.org"
+        id: "did:web:dome-marketplace.dev.in2.es"
         delegationPath: "/ar/delegation"
         tokenPath: "/oauth2/token"
-        url: "https://keyrock.dome-marketplace-sbx.org"
+        url: "https://keyrock-dome.dev.in2.es"
 
       trustAnchor:
         id: "EU.EORI.FIWARESATELLITE"
         tokenPath: "/token"
         trustedListPath: "/trusted_list"
-        url: "https://tir.dome-marketplace-sbx.org"
+        url: "https://tir-dome.dev.in2.es"
         
     trustedVerifiers:
-      - https://verifier.dome-marketplace-sbx.org/.well-known/jwks
+      - https://verifier-dome.dev.in2.es/.well-known/jwks
 
-    providerId: "did:web:dome-marketplace-sbx.org"
+    providerId: "did:web:dome-marketplace.dev.in2.es"
     
   additionalEnvVars:
     - name: ISHARE_CERTIFICATE_PATH

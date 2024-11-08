@@ -28,7 +28,7 @@ keycloak:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: keycloak.dome-marketplace-sbx.org
+    hostname: keycloak-dome.dev.in2.es
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-sbx-issuer
     tls: true
@@ -57,7 +57,7 @@ keycloak:
   - name: KEYCLOAK_LOG_LEVEL
     value: INFO
   - name: VCISSUER_ISSUER_DID
-    value: "did:web:dome-marketplace-sbx.org"
+    value: "did:web:dome-marketplace.dev.in2.es"
   - name: VCISSUER_WALTID_ADDRESS
     value: "http://walt-id-vcwaltid"
 

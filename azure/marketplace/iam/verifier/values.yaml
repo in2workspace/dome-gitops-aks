@@ -10,18 +10,18 @@ verifier-api:
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-sbx-issuer
     hosts:
-      - host: verifier.dome-marketplace-sbx.org
+      - host: verifier-dome.dev.in2.es
         paths:
           - path: /
             pathType: Prefix
     tls:
       - hosts:
-          - verifier.dome-marketplace-sbx.org
+          - verifier-dome.dev.in2.es
         secretName: verifier-tls-sec
 
   app:
     profile: dev
-    externalDomain: "https://verifier.dome-marketplace-sbx.org"
+    externalDomain: "https://verifier-dome.dev.in2.es"
     accessToken:
       expirationUnitTime: MINUTES
       expirationTime: 60
@@ -37,4 +37,4 @@ verifier-api:
     verifierUiLoginUris:
       onboardingUri: "https://knowledgebase.dome-marketplace.org/shelves/company-onboarding-process"
       supportUri: "https://ticketing.dome-marketplace.org"
-      walletUri: "https://wallet.dome-marketplace-sbx.org"
+      walletUri: "https://wallet-dome.dev.in2.es"

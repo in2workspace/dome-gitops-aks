@@ -1,4 +1,4 @@
-did:web:dome-marketplace-sbx.org
+did:web:dome-marketplace.dev.in2.es
 did:web:eurodyn.com
 did:web:in2.es
 did:web:libelium.com

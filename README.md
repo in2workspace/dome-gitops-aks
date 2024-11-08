@@ -283,6 +283,8 @@ TODO Repairing sealed secrets. By default the required secret will be in Generic
 
 TODO Access Node requires allways some sealed secret but there are explicit config to switch it to NOT required
 
+TODO Update External URLs to your own Domain dev.in2.es
+
 In order to deploy a new application, follow the steps:
 1. Fork the repository and create a new branch.
 2. (OPTIONAL) Add a new namespace to the [namespaces](./ionos/namespaces/)

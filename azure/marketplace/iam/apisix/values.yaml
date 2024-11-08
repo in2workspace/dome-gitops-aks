@@ -31,7 +31,7 @@ apisix:
     # -- configure ingress and tls through the ingress-controller
     ingress:
       enabled: true
-      hostname: tmforum.dome-marketplace-sbx.org
+      hostname: tmforum-dome.dev.in2.es
       ingressClassName: nginx
       tls: true
       pathType: Prefix

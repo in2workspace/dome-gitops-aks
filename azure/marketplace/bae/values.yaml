@@ -53,7 +53,7 @@ business-api-ecosystem:
     enabled: true
     clientId: did:key:zDnaeypyWjzn54GuUP7PmDXiiggCyiG7ksMF7Unm7kjtEKBez
     verifier:
-      host: https://verifier.dome-marketplace-sbx.org
+      host: https://verifier-dome.dev.in2.es
       qrCodePath: /oidc/authorize
       tokenPath: /oidc/token
       jwksPath: /oidc/jwks
@@ -112,7 +112,7 @@ business-api-ecosystem:
               "http://trusted-issuers-list:8080"
             ]
 
-  externalUrl: https://dome-marketplace-sbx.org
+  externalUrl: https://dome-marketplace.dev.in2.es
 
   bizEcosystemChargingBackend:
 
@@ -180,10 +180,10 @@ business-api-ecosystem:
         cert-manager.io/cluster-issuer: letsencrypt-sbx-issuer
       tls: 
        -  hosts: 
-            - dome-marketplace-sbx.org
+            - dome-marketplace.dev.in2.es
           secretName: walt-id-vcwaltid-tls-sec
       hosts: 
-        - host: dome-marketplace-sbx.org
+        - host: dome-marketplace.dev.in2.es
           paths: 
             - "/"
 
@@ -204,11 +204,11 @@ business-api-ecosystem:
       - name: BAE_LP_SIOP_IS_REDIRECTION
         value: "true"
       - name: BAE_LP_CHAT_URL
-        value: https://eng-gpt.dome-marketplace-sbx.org/predict
+        value: https://eng-gpt-dome.dev.in2.es/predict
       - name: BAE_LP_KNOWLEDGE_BASE_URL
-        value: https://knowledgebase.dome-marketplace-sbx.org/
+        value: https://knowledgebase-dome.dev.in2.es/
       - name: BAE_LP_TICKETING_URL
-        value: https://ticketing.dome-marketplace-sbx.org/
+        value: https://ticketing-dome.dev.in2.es/
       - name: BAE_LP_SIOP_OPERATORS
         value: did:elsi:VATES-B87798617
       - name: BAE_LP_SEARCH_URL
@@ -218,7 +218,7 @@ business-api-ecosystem:
       - name: BAE_LP_MATOMO_URL
         value: https://dome-webstats.eurodyn.com/
       - name: BAE_LP_DOME_TRUST
-        value: https://dome-certification.dome-marketplace-sbx.org
+        value: https://dome-certification-dome.dev.in2.es
       - name: BAE_LP_SIOP_PRIVATE_KEY
         valueFrom:
           secretKeyRef:
