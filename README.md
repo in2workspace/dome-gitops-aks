@@ -276,10 +276,12 @@ Login to our [ArgoCD](https://argocd.dome-marketplace.org).
 
 TODO Add the list of requiered applications using
 kubectl apply -f applications_in2_sbx/azure-argocd.yaml -n argocd
-# wait for it to be SYNCED and Healthy
+ wait for it to be SYNCED and Healthy
     watch kubectl get applications -n argocd
 
 TODO Repairing sealed secrets. By default the required secret will be in Generic Secrets
+
+TODO Access Node requires allways some sealed secret but there are explicit config to switch it to NOT required
 
 In order to deploy a new application, follow the steps:
 1. Fork the repository and create a new branch.
